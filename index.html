@@ -57,14 +57,26 @@ h4{font-size:1.2rem;margin:1.25rem 0 .75rem}
 #training{background:#e3f4cd}
 #fascinations{background:var(--moss);color:var(--birch)}
 .ph{display:grid;place-items:center;text-align:center;min-height:220px;padding:1.5rem;border:3px dashed currentColor;border-radius:28px 6px 28px 6px;opacity:.85;font-weight:600}
-.band{margin:0}
-.band img{display:block;width:100%;height:clamp(200px,34vw,380px);object-fit:cover;object-position:50% 30%;border-radius:28px 6px 28px 6px}
+.band{margin:0;padding:3rem 0;background:var(--birch)}
+.band img{display:block;width:100%;height:clamp(240px,42vw,480px);object-fit:cover;object-position:50% 25%;border-radius:28px 6px 28px 6px;box-shadow:0 10px 30px rgba(31,42,34,.18)}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem}
 .gallery figure{margin:0}
 .gallery img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:28px 6px 28px 6px}
 .gallery figure:nth-child(even) img{border-radius:6px 28px 6px 28px}
 .gallery figure:nth-child(even){margin-top:1.5rem}
 .gallery figcaption{margin-top:.5rem;font-size:.95rem}
+.slider{position:relative}
+.sl-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;gap:1rem;border-radius:28px 6px 28px 6px;scrollbar-width:none}
+.sl-track::-webkit-scrollbar{display:none}
+.sl-track figure{flex:0 0 100%;margin:0;scroll-snap-align:center}
+.sl-track img{display:block;width:100%;height:clamp(300px,60vw,560px);object-fit:contain;background:rgba(59,36,23,.1);border-radius:28px 6px 28px 6px}
+.sl-track figcaption{margin-top:.6rem;text-align:center;font-weight:600}
+.sl-btn{position:absolute;top:calc(clamp(300px,60vw,560px)/2 - 24px);width:48px;height:48px;border-radius:50%;border:3px solid var(--walnut);background:var(--sun);color:var(--walnut);font:800 1.4rem/1 Figtree,sans-serif;cursor:pointer;z-index:2}
+.sl-btn:hover{background:var(--leaf)}
+.sl-prev{left:.75rem}.sl-next{right:.75rem}
+.sl-dots{display:flex;justify-content:center;gap:.5rem;margin-top:.75rem}
+.sl-dots button{width:14px;height:14px;padding:0;border-radius:50%;border:2px solid var(--walnut);background:transparent;cursor:pointer}
+.sl-dots button[aria-current=true]{background:var(--walnut)}
 .tl{list-style:none;margin:2rem 0 0;padding:0 0 0 1.5rem;border-left:4px solid var(--oak)}
 .tl li{position:relative;padding:0 0 1.6rem 1rem;display:grid;grid-template-columns:9.5rem 1fr;gap:.25rem 1.25rem}
 .tl li::before{content:"";position:absolute;left:-2.1rem;top:.45rem;width:14px;height:14px;border-radius:50%;background:var(--sun);border:3px solid var(--oak)}
@@ -124,12 +136,17 @@ footer{background:var(--ink);color:var(--birch);padding:1.5rem 0;font-size:.9rem
 <div class="panel p-wood" id="carpentry">
 <h3 data-i="n_solid"></h3>
 <p class="lead" data-i="solid_note"></p>
-<div class="gallery">
+<div class="slider" id="slider" role="region" aria-roledescription="carousel" data-a="n_solid">
+<button class="sl-btn sl-prev" type="button" data-a="s_prev">‹</button>
+<div class="sl-track" id="sl-track" tabindex="0">
 <figure><img src="Portfolio%20Pics/bookshelf.jpeg" alt="" data-a="c_book" loading="lazy"><figcaption data-i="c_book"></figcaption></figure>
 <figure><img src="Portfolio%20Pics/stool.jpeg" alt="" data-a="c_stool" loading="lazy"><figcaption data-i="c_stool"></figcaption></figure>
-<figure><img src="Portfolio%20Pics/corner-shelves.jpeg" alt="" data-a="c_corner" loading="lazy" style="object-position:50% 35%"><figcaption data-i="c_corner"></figcaption></figure>
+<figure><img src="Portfolio%20Pics/corner-shelves.jpeg" alt="" data-a="c_corner" loading="lazy"><figcaption data-i="c_corner"></figcaption></figure>
 <figure><img src="Portfolio%20Pics/coat-rack.jpeg" alt="" data-a="c_coat" loading="lazy"><figcaption data-i="c_coat"></figcaption></figure>
 <figure><img src="Portfolio%20Pics/understairs-wip.jpeg" alt="" data-a="c_stairs" loading="lazy"><figcaption data-i="c_stairs"></figcaption></figure>
+</div>
+<button class="sl-btn sl-next" type="button" data-a="s_next">›</button>
+<div class="sl-dots" id="sl-dots"></div>
 </div>
 </div>
 </div></section>
@@ -157,23 +174,23 @@ footer{background:var(--ink);color:var(--birch);padding:1.5rem 0;font-size:.9rem
 
 <script>
 var T={
-cs:{n_edu:"Vzdělání",n_career:"Kariérní cesta",n_create:"Tvorba",n_train:"Školení, dovednosti a certifikáty",n_fasc:"Fascinace",n_contact:"Kontakty",
-n_solid:"Realizace z masivního dřeva",
+cs:{n_edu:"Vzdělání",n_career:"Kariérní cesta",n_create:"Tvorba",n_train:"Školení, dovednosti a certifikáty",n_fasc:"Záliby",n_contact:"Kontakty",
+n_solid:"Realizace z masivního dřeva",s_prev:"Předchozí fotka",s_next:"Další fotka",
 tag:"Nikdy není pozdě udělat něco dobrého. Zajímám se o věci, které fungují zdravě.",
 intro:"Stavitel a řemeslník, který mění odvážné plány ve skutečnost z betonu, oceli i voňavého dřeva. Na stavbě i v dílně sází na preciznost, a když zrovna neřídí projekty, dobíjí baterky v alpských štítech.",
 hint:"Vyber letokruh a přeskoč na sekci.",sections:"Sekce",
 solid_note:"Použitý materiál: ořech z naší zahrady, neošetřené střešní latě a spárovka z hobbymarketu. Instalace v bytě se sádrokartonovými stěnami je řešená jako samonosná.",
 c_book:"Knihovna z větví",c_stool:"Stolička s nohami z větví",c_corner:"Rohové police",c_coat:"Věšák",p_beside:"Michal vedle stromu",p_tree:"Michal na stromě",p_forest:"Michal s lesem v pozadí",p_mushroom:"Michal s houbou",c_stairs:"Police pod schody (rozpracované)",
 fasc_note:"Péče o starý dům, kde je každá rekonstrukce a oprava radostí ke zlepšení.",contact_soon:"Kontakty doplním brzy."},
-en:{n_edu:"Education",n_career:"Career path",n_create:"Creative work",n_train:"Training, skills & certificates",n_fasc:"Fascinations",n_contact:"Contacts",
-n_solid:"Solid wood projects",
+en:{n_edu:"Education",n_career:"Career path",n_create:"Creative work",n_train:"Training, skills & certificates",n_fasc:"Passions",n_contact:"Contacts",
+n_solid:"Solid wood projects",s_prev:"Previous photo",s_next:"Next photo",
 tag:"It’s never too late to do something good. I’m interested in things that work in a healthy way.",
 intro:"A builder and craftsman who turns bold plans into reality in concrete, steel and fragrant wood. On site and in the workshop he relies on precision, and when he is not running projects, he recharges his batteries among Alpine peaks.",
 hint:"Pick a ring to jump to a section.",sections:"Sections",
 c_book:"Branch bookshelf",c_stool:"Stool with branch legs",c_corner:"Corner shelves",c_coat:"Coat rack",p_beside:"Michal beside a tree",p_tree:"Michal in a tree",p_forest:"Michal with trees in the background",p_mushroom:"Michal with a mushroom",c_stairs:"Shelving under the stairs (work in progress)",solid_note:"Materials used: walnut from our garden, untreated roof battens and edge-glued boards from a DIY store. The installation in an apartment with plasterboard walls is designed to be self-supporting.",
 fasc_note:"Caring for an old house, where every renovation and repair is a joy of improvement.",contact_soon:"Contacts coming soon."},
-it:{n_edu:"Istruzione",n_career:"Percorso professionale",n_create:"Creazioni",n_train:"Formazione, competenze e certificazioni",n_fasc:"Fascinazioni",n_contact:"Contatti",
-n_solid:"Realizzazioni in legno massello",
+it:{n_edu:"Istruzione",n_career:"Percorso professionale",n_create:"Creazioni",n_train:"Formazione, competenze e certificazioni",n_fasc:"Passioni",n_contact:"Contatti",
+n_solid:"Realizzazioni in legno massello",s_prev:"Foto precedente",s_next:"Foto successiva",
 tag:"Non è mai troppo tardi per fare qualcosa di buono. Mi interessano le cose che funzionano in modo sano.",
 intro:"Costruttore e artigiano che trasforma piani audaci in realtà con calcestruzzo, acciaio e legno profumato. In cantiere come in laboratorio punta sulla precisione e, quando non guida progetti, ricarica le batterie sulle vette alpine.",
 hint:"Scegli un anello per passare a una sezione.",sections:"Sezioni",
@@ -250,13 +267,23 @@ function setLang(l){
  document.querySelectorAll("[data-i]").forEach(function(e){e.textContent=g(l,e.dataset.i)});
  document.querySelectorAll("[data-a]").forEach(function(e){e.setAttribute(e.tagName=="IMG"?"alt":"aria-label",g(l,e.dataset.a))});
  document.getElementById("edu").innerHTML=d.EDU.map(function(s){return '<div class="school"><h3>'+s.n+'</h3><ul>'+s.l.map(function(x){return "<li>"+x+"</li>"}).join("")+"</ul></div>"}).join("");
- document.getElementById("tl-career").innerHTML=d.CAR.map(function(r){return "<li><time>"+r[0]+"</time><div><b>"+r[1]+"</b>"+r[2]+"</div></li>"}).join("");
+ document.getElementById("tl-career").innerHTML=d.CAR.slice().reverse().map(function(r){return "<li><time>"+r[0]+"</time><div><b>"+r[1]+"</b>"+r[2]+"</div></li>"}).join("");
  document.getElementById("tl-cert").innerHTML=d.CERT.map(function(r){return "<li><time>"+r[0]+"</time><div><b>"+r[1]+"</b>"+r[2]+"</div></li>"}).join("");
  document.getElementById("fasc").innerHTML=d.FASC.map(function(x){return "<li>"+x+"</li>"}).join("");
  document.querySelectorAll(".lang button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.l==l)});
  try{localStorage.setItem("lang",l)}catch(e){}
  sync();
 }
+(function(){var tr=document.getElementById("sl-track"),dots=document.getElementById("sl-dots"),n=tr.children.length,i=0;
+ for(var k=0;k<n;k++){(function(k){var b=document.createElement("button");b.type="button";b.setAttribute("aria-label",(k+1)+"/"+n);b.onclick=function(){show(k)};dots.appendChild(b)})(k)}
+ function show(k){i=(k+n)%n;tr.scrollTo({left:tr.children[i].offsetLeft-tr.offsetLeft,behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"})}
+ function mark(){Array.prototype.forEach.call(dots.children,function(b,k){b.setAttribute("aria-current",k==i)})}
+ tr.addEventListener("scroll",function(){var w=tr.clientWidth+16;i=Math.max(0,Math.min(n-1,Math.round(tr.scrollLeft/w)));mark()},{passive:true});
+ document.querySelector(".sl-prev").onclick=function(){show(i-1)};
+ document.querySelector(".sl-next").onclick=function(){show(i+1)};
+ tr.addEventListener("keydown",function(e){if(e.key=="ArrowLeft"){e.preventDefault();show(i-1)}if(e.key=="ArrowRight"){e.preventDefault();show(i+1)}});
+ mark();
+})();
 document.querySelectorAll(".lang button").forEach(function(b){b.onclick=function(){setLang(b.dataset.l)}});
 var IDS=["education","career","creations","training","fascinations","contact"],cur=null;
 function sync(){var l=document.documentElement.lang;
