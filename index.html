@@ -58,7 +58,10 @@ h4{font-size:1.2rem;margin:1.25rem 0 .75rem}
 #fascinations{background:var(--moss);color:var(--birch)}
 .ph{display:grid;place-items:center;text-align:center;min-height:220px;padding:1.5rem;border:3px dashed currentColor;border-radius:28px 6px 28px 6px;opacity:.85;font-weight:600}
 .band{margin:0;padding:3rem 0;background:var(--birch)}
-.band img{display:block;width:100%;height:clamp(280px,55vw,560px);object-fit:cover;object-position:50% 0%;border-radius:28px 6px 28px 6px;box-shadow:0 10px 30px rgba(31,42,34,.18)}
+.band .win{margin:0 auto;overflow:hidden;border-radius:28px 6px 28px 6px;box-shadow:0 10px 30px rgba(31,42,34,.18)}
+.band img{display:block;width:100%;height:auto;max-width:none}
+.band.pin .win{position:sticky;top:72px}
+.band.pin img{will-change:transform}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem}
 .gallery figure{margin:0}
 .gallery img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:28px 6px 28px 6px}
@@ -122,7 +125,7 @@ footer{background:var(--ink);color:var(--birch);padding:1.5rem 0;font-size:.9rem
 <div id="edu"></div>
 </div></section>
 
-<figure class="band"><div class="wrap"><img src="Portfolio%20Pics/me-beside.jpeg" alt="" data-a="p_beside" loading="lazy"></div></figure>
+<figure class="band"><div class="wrap"><div class="win"><img src="Portfolio%20Pics/me-beside.jpeg" alt="" data-a="p_beside" loading="lazy"></div></div></figure>
 <section id="career"><div class="wrap">
 <h2 data-i="n_career"></h2>
 <ul class="tl" id="tl-career"></ul>
@@ -146,20 +149,20 @@ footer{background:var(--ink);color:var(--birch);padding:1.5rem 0;font-size:.9rem
 </div>
 </div></section>
 
-<figure class="band"><div class="wrap"><img src="Portfolio%20Pics/me-tree.jpeg" alt="" data-a="p_tree" loading="lazy"></div></figure>
+<figure class="band"><div class="wrap"><div class="win"><img src="Portfolio%20Pics/me-tree.jpeg" alt="" data-a="p_tree" loading="lazy"></div></div></figure>
 <section id="training"><div class="wrap">
 <h2 data-i="n_train"></h2>
 <ul class="tl" id="tl-cert"></ul>
 </div></section>
 
-<figure class="band"><div class="wrap"><img src="Portfolio%20Pics/me-forest.jpeg" alt="" data-a="p_forest" loading="lazy"></div></figure>
+<figure class="band"><div class="wrap"><div class="win"><img src="Portfolio%20Pics/me-forest.jpeg" alt="" data-a="p_forest" loading="lazy"></div></div></figure>
 <section id="fascinations"><div class="wrap">
 <h2 data-i="n_fasc"></h2>
 <ul class="chipsf" id="fasc"></ul>
 <p class="note" data-i="fasc_note"></p>
 </div></section>
 
-<figure class="band"><div class="wrap"><img src="Portfolio%20Pics/me-mushroom.jpeg" alt="" data-a="p_mushroom" loading="lazy"></div></figure>
+<figure class="band"><div class="wrap"><div class="win"><img src="Portfolio%20Pics/me-mushroom.jpeg" alt="" data-a="p_mushroom" loading="lazy"></div></div></figure>
 <section id="contact"><div class="wrap">
 <h2 data-i="n_contact"></h2>
 <p data-i="contact_soon"></p>
@@ -277,15 +280,23 @@ function setLang(l){
  tr.addEventListener("click",function(e){var f=e.target.closest("figure");if(f)toggle(f)});
  tr.addEventListener("keydown",function(e){if(e.key=="Enter"||e.key==" "){var f=e.target.closest("figure");if(f){e.preventDefault();toggle(f)}}});
 })();
-/* photos of me: pan down through the whole picture while scrolling */
-(function(){var imgs=document.querySelectorAll(".band img"),rm=matchMedia("(prefers-reduced-motion:reduce)").matches,tick=false;
- function pan(){tick=false;var vh=window.innerHeight;
-  imgs.forEach(function(im){var r=im.getBoundingClientRect(),from=vh*.85,to=(vh-r.height)/2,d=from-to,
-   p=rm?.3:(d>0?Math.max(0,Math.min(1,(from-r.top)/d)):1);
-   im.style.objectPosition="50% "+(p*100).toFixed(1)+"%"})}
+/* photos of me: window pinned while the full picture scrolls through it 1:1 */
+(function(){var bands=[].slice.call(document.querySelectorAll(".band")),TOP=72,tick=false;
+ function lay(){var vh=window.innerHeight;
+  bands.forEach(function(bd){var wrap=bd.firstChild,win=wrap.firstChild,im=win.firstChild;if(!im.naturalWidth)return;
+   var cs=getComputedStyle(wrap),inner=wrap.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),
+   r=im.naturalHeight/im.naturalWidth,w=Math.min(inner,r>1?720:inner),H=w*r,Wh=Math.min(H,vh*.8);
+   win.style.width=w+"px";im.style.width=w+"px";
+   if(H>Wh+4){bd.classList.add("pin");wrap.style.height=H+"px";win.style.height=Wh+"px";bd._d=H-Wh}
+   else{bd.classList.remove("pin");wrap.style.height="";win.style.height="";im.style.transform="";bd._d=0}});
+  pan()}
+ function pan(){tick=false;bands.forEach(function(bd){if(!bd._d)return;
+  var t=bd.firstChild.getBoundingClientRect().top,p=Math.max(0,Math.min(1,(TOP-t)/bd._d));
+  bd.firstChild.firstChild.firstChild.style.transform="translateY("+(-p*bd._d).toFixed(1)+"px)"})}
  function req(){if(!tick){tick=true;requestAnimationFrame(pan)}}
- window.addEventListener("scroll",req,{passive:true});window.addEventListener("resize",req);
- imgs.forEach(function(im){im.addEventListener("load",req)});pan();
+ window.addEventListener("scroll",req,{passive:true});window.addEventListener("resize",lay);
+ bands.forEach(function(bd){var im=bd.firstChild.firstChild.firstChild;if(im.complete)lay();else im.addEventListener("load",lay)});
+ lay();
 })();
 document.querySelectorAll(".lang button").forEach(function(b){b.onclick=function(){setLang(b.dataset.l)}});
 var IDS=["education","career","creations","training","fascinations","contact"],cur=null;
