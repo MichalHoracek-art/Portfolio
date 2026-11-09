@@ -72,7 +72,7 @@ h4{font-size:1.2rem;margin:1.25rem 0 .75rem}
 .mq-track{display:flex;width:max-content;animation:mq 40s linear infinite}
 .mq.paused .mq-track{animation-play-state:paused}
 .mq figure{flex:none;margin:0;padding-right:1.25rem;cursor:pointer}
-.mq img{display:block;height:clamp(260px,40vw,420px);width:auto;border-radius:28px 6px 28px 6px;outline:3px solid transparent;outline-offset:-3px}
+.mq img{display:block;height:clamp(320px,48vw,520px);width:auto;border-radius:28px 6px 28px 6px;outline:3px solid transparent;outline-offset:-3px}
 .mq.paused figure.on img{outline-color:var(--sun)}
 .mq figcaption{margin-top:.5rem;font-weight:600}
 @keyframes mq{to{transform:translateX(-50%)}}
@@ -285,7 +285,7 @@ function setLang(l){
  function lay(){var vh=window.innerHeight;
   bands.forEach(function(bd){var wrap=bd.firstChild,win=wrap.firstChild,im=win.firstChild;if(!im.naturalWidth)return;
    var cs=getComputedStyle(wrap),inner=wrap.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),
-   r=im.naturalHeight/im.naturalWidth,w=Math.min(inner,r>1?720:inner),H=w*r,Wh=Math.min(H,vh*.8);
+   r=im.naturalHeight/im.naturalWidth,w=inner,H=w*r,Wh=Math.min(H,vh*.8);
    win.style.width=w+"px";im.style.width=w+"px";
    if(H>Wh+4){bd.classList.add("pin");wrap.style.height=H+"px";win.style.height=Wh+"px";bd._d=H-Wh}
    else{bd.classList.remove("pin");wrap.style.height="";win.style.height="";im.style.transform="";bd._d=0}});
