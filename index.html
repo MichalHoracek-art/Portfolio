@@ -57,6 +57,8 @@ h4{font-size:1.2rem;margin:1.25rem 0 .75rem}
 #training{background:#e3f4cd}
 #fascinations{background:var(--moss);color:var(--birch)}
 .ph{display:grid;place-items:center;text-align:center;min-height:220px;padding:1.5rem;border:3px dashed currentColor;border-radius:28px 6px 28px 6px;opacity:.85;font-weight:600}
+.band{margin:0}
+.band img{display:block;width:100%;height:clamp(200px,34vw,380px);object-fit:cover;object-position:50% 30%;border-radius:28px 6px 28px 6px}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem}
 .gallery figure{margin:0}
 .gallery img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:28px 6px 28px 6px}
@@ -111,6 +113,7 @@ footer{background:var(--ink);color:var(--birch);padding:1.5rem 0;font-size:.9rem
 <div id="edu"></div>
 </div></section>
 
+<figure class="band"><div class="wrap"><img src="Portfolio%20Pics/me-beside.jpg" alt="" data-a="p_beside" loading="lazy"></div></figure>
 <section id="career"><div class="wrap">
 <h2 data-i="n_career"></h2>
 <ul class="tl" id="tl-career"></ul>
@@ -122,26 +125,29 @@ footer{background:var(--ink);color:var(--birch);padding:1.5rem 0;font-size:.9rem
 <h3 data-i="n_solid"></h3>
 <p class="lead" data-i="solid_note"></p>
 <div class="gallery">
-<figure><img src="Portfolio/Portfolio%20Pics/bookshelf.jpeg" alt="" data-a="c_book" loading="lazy"><figcaption data-i="c_book"></figcaption></figure>
-<figure><img src="Portfolio%20Pics/stool.jpeg" alt="" data-a="c_stool" loading="lazy"><figcaption data-i="c_stool"></figcaption></figure>
-<figure><img src="Portfolio%20Pics/corner-shelves.jpeg" alt="" data-a="c_corner" loading="lazy" style="object-position:50% 35%"><figcaption data-i="c_corner"></figcaption></figure>
-<figure><img src="Portfolio%20Pics/coat-rack.jpeg" alt="" data-a="c_coat" loading="lazy"><figcaption data-i="c_coat"></figcaption></figure>
-<figure><img src="Portfolio%20Pics/understairs-wip.jpeg" alt="" data-a="c_stairs" loading="lazy"><figcaption data-i="c_stairs"></figcaption></figure>
+<figure><img src="Portfolio%20Pics/bookshelf.jpg" alt="" data-a="c_book" loading="lazy"><figcaption data-i="c_book"></figcaption></figure>
+<figure><img src="Portfolio%20Pics/stool.jpg" alt="" data-a="c_stool" loading="lazy"><figcaption data-i="c_stool"></figcaption></figure>
+<figure><img src="Portfolio%20Pics/corner-shelves.jpg" alt="" data-a="c_corner" loading="lazy" style="object-position:50% 35%"><figcaption data-i="c_corner"></figcaption></figure>
+<figure><img src="Portfolio%20Pics/coat-rack.jpg" alt="" data-a="c_coat" loading="lazy"><figcaption data-i="c_coat"></figcaption></figure>
+<figure><img src="Portfolio%20Pics/understairs-wip.jpg" alt="" data-a="c_stairs" loading="lazy"><figcaption data-i="c_stairs"></figcaption></figure>
 </div>
 </div>
 </div></section>
 
+<figure class="band"><div class="wrap"><img src="Portfolio%20Pics/me-tree.jpg" alt="" data-a="p_tree" loading="lazy"></div></figure>
 <section id="training"><div class="wrap">
 <h2 data-i="n_train"></h2>
 <ul class="tl" id="tl-cert"></ul>
 </div></section>
 
+<figure class="band"><div class="wrap"><img src="Portfolio%20Pics/me-forest.jpg" alt="" data-a="p_forest" loading="lazy"></div></figure>
 <section id="fascinations"><div class="wrap">
 <h2 data-i="n_fasc"></h2>
 <ul class="chipsf" id="fasc"></ul>
 <p class="note" data-i="fasc_note"></p>
 </div></section>
 
+<figure class="band"><div class="wrap"><img src="Portfolio%20Pics/me-mushroom.jpg" alt="" data-a="p_mushroom" loading="lazy"></div></figure>
 <section id="contact"><div class="wrap">
 <h2 data-i="n_contact"></h2>
 <p data-i="contact_soon"></p>
@@ -157,21 +163,21 @@ tag:"Nikdy není pozdě udělat něco dobrého. Zajímám se o věci, které fun
 intro:"Stavitel a řemeslník, který mění odvážné plány ve skutečnost z betonu, oceli i voňavého dřeva. Na stavbě i v dílně sází na preciznost, a když zrovna neřídí projekty, dobíjí baterky v alpských štítech.",
 hint:"Vyber letokruh a přeskoč na sekci.",sections:"Sekce",
 solid_note:"Použitý materiál: ořech z naší zahrady, neošetřené střešní latě a spárovka z hobbymarketu. Instalace v bytě se sádrokartonovými stěnami je řešená jako samonosná.",
-c_book:"Knihovna z větví",c_stool:"Stolička s nohami z větví",c_corner:"Rohové police",c_coat:"Věšák",c_stairs:"Police pod schody (rozpracované)",
+c_book:"Knihovna z větví",c_stool:"Stolička s nohami z větví",c_corner:"Rohové police",c_coat:"Věšák",p_beside:"Michal vedle stromu",p_tree:"Michal na stromě",p_forest:"Michal s lesem v pozadí",p_mushroom:"Michal s houbou",c_stairs:"Police pod schody (rozpracované)",
 fasc_note:"Péče o starý dům, kde je každá rekonstrukce a oprava radostí ke zlepšení.",contact_soon:"Kontakty doplním brzy."},
 en:{n_edu:"Education",n_career:"Career path",n_create:"Creative work",n_train:"Training, skills & certificates",n_fasc:"Fascinations",n_contact:"Contacts",
 n_solid:"Solid wood projects",
 tag:"It’s never too late to do something good. I’m interested in things that work in a healthy way.",
 intro:"A builder and craftsman who turns bold plans into reality in concrete, steel and fragrant wood. On site and in the workshop he relies on precision, and when he is not running projects, he recharges his batteries among Alpine peaks.",
 hint:"Pick a ring to jump to a section.",sections:"Sections",
-c_book:"Branch bookshelf",c_stool:"Stool with branch legs",c_corner:"Corner shelves",c_coat:"Coat rack",c_stairs:"Shelving under the stairs (work in progress)",solid_note:"Materials used: walnut from our garden, untreated roof battens and edge-glued boards from a DIY store. The installation in an apartment with plasterboard walls is designed to be self-supporting.",
+c_book:"Branch bookshelf",c_stool:"Stool with branch legs",c_corner:"Corner shelves",c_coat:"Coat rack",p_beside:"Michal beside a tree",p_tree:"Michal in a tree",p_forest:"Michal with trees in the background",p_mushroom:"Michal with a mushroom",c_stairs:"Shelving under the stairs (work in progress)",solid_note:"Materials used: walnut from our garden, untreated roof battens and edge-glued boards from a DIY store. The installation in an apartment with plasterboard walls is designed to be self-supporting.",
 fasc_note:"Caring for an old house, where every renovation and repair is a joy of improvement.",contact_soon:"Contacts coming soon."},
 it:{n_edu:"Istruzione",n_career:"Percorso professionale",n_create:"Creazioni",n_train:"Formazione, competenze e certificazioni",n_fasc:"Fascinazioni",n_contact:"Contatti",
 n_solid:"Realizzazioni in legno massello",
 tag:"Non è mai troppo tardi per fare qualcosa di buono. Mi interessano le cose che funzionano in modo sano.",
 intro:"Costruttore e artigiano che trasforma piani audaci in realtà con calcestruzzo, acciaio e legno profumato. In cantiere come in laboratorio punta sulla precisione e, quando non guida progetti, ricarica le batterie sulle vette alpine.",
 hint:"Scegli un anello per passare a una sezione.",sections:"Sezioni",
-c_book:"Libreria con rami",c_stool:"Sgabello con gambe di ramo",c_corner:"Mensole angolari",c_coat:"Attaccapanni",c_stairs:"Scaffale sotto le scale (in lavorazione)",solid_note:"Materiali usati: noce del nostro giardino, listelli da tetto non trattati e legno lamellare da un negozio fai da te. L'installazione in un appartamento con pareti in cartongesso è pensata come autoportante.",
+c_book:"Libreria con rami",c_stool:"Sgabello con gambe di ramo",c_corner:"Mensole angolari",c_coat:"Attaccapanni",p_beside:"Michal accanto a un albero",p_tree:"Michal su un albero",p_forest:"Michal con alberi sullo sfondo",p_mushroom:"Michal con un fungo",c_stairs:"Scaffale sotto le scale (in lavorazione)",solid_note:"Materiali usati: noce del nostro giardino, listelli da tetto non trattati e legno lamellare da un negozio fai da te. L'installazione in un appartamento con pareti in cartongesso è pensata come autoportante.",
 fasc_note:"La cura di una vecchia casa, dove ogni ristrutturazione e riparazione è una gioia di miglioramento.",contact_soon:"Contatti in arrivo."}
 };
 var EDU=[
