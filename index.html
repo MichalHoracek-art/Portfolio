@@ -112,6 +112,9 @@ h3{font-size:clamp(1.5rem,3.5vw,2rem);margin-bottom:.75rem}
 .mq-ctl [hidden]{display:none}
 @media (prefers-reduced-motion:reduce){.mq-view{scroll-behavior:auto}}
 
+.mq-view.drift,.mq-view.glide{scroll-snap-type:none}
+.mq-view.drift{scroll-behavior:auto}
+
 /* timelines */
 .tl{list-style:none;margin:2rem 0 0;padding:0 0 0 1.5rem;border-left:4px solid var(--oak)}
 .tl li{position:relative;padding:0 0 1.6rem 1rem;display:grid;grid-template-columns:9.5rem 1fr;gap:.25rem 1.25rem}
@@ -197,9 +200,9 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;justify-content:space-
 <ul class="mq-track" id="mq-track">
 <li role="group" aria-roledescription="snímek" data-r="r_slide" aria-label="1 / 5"><figure><img src="Portfolio%20Pics/bookshelf.jpeg" alt="Knihovna z větví, fotografie hotové realizace" data-a="a_book" loading="eager" decoding="async"><figcaption data-i="c_book">Knihovna z větví</figcaption></figure></li>
 <li role="group" aria-roledescription="snímek" data-r="r_slide" aria-label="2 / 5"><figure><img src="Portfolio%20Pics/stool.jpeg" alt="Stolička s nohami z větví, fotografie hotové realizace" data-a="a_stool" loading="eager" decoding="async"><figcaption data-i="c_stool">Stolička s nohami z větví</figcaption></figure></li>
-<li role="group" aria-roledescription="snímek" data-r="r_slide" aria-label="3 / 5"><figure><img src="Portfolio%20Pics/corner-shelves.jpeg" alt="Rohové police, fotografie hotové realizace" data-a="a_corner" loading="lazy" decoding="async"><figcaption data-i="c_corner">Rohové police</figcaption></figure></li>
-<li role="group" aria-roledescription="snímek" data-r="r_slide" aria-label="4 / 5"><figure><img src="Portfolio%20Pics/coat-rack.jpeg" alt="Dřevěný věšák, fotografie hotové realizace" data-a="a_coat" loading="lazy" decoding="async"><figcaption data-i="c_coat">Věšák</figcaption></figure></li>
-<li role="group" aria-roledescription="snímek" data-r="r_slide" aria-label="5 / 5"><figure><img src="Portfolio%20Pics/understairs-wip.jpeg" alt="Police pod schody, rozpracovaná realizace" data-a="a_stairs" loading="lazy" decoding="async"><figcaption data-i="c_stairs">Police pod schody (rozpracované)</figcaption></figure></li>
+<li role="group" aria-roledescription="snímek" data-r="r_slide" aria-label="3 / 5"><figure><img src="Portfolio%20Pics/corner-shelves.jpeg" alt="Rohové police, fotografie hotové realizace" data-a="a_corner" loading="eager" decoding="async"><figcaption data-i="c_corner">Rohové police</figcaption></figure></li>
+<li role="group" aria-roledescription="snímek" data-r="r_slide" aria-label="4 / 5"><figure><img src="Portfolio%20Pics/coat-rack.jpeg" alt="Dřevěný věšák, fotografie hotové realizace" data-a="a_coat" loading="eager" decoding="async"><figcaption data-i="c_coat">Věšák</figcaption></figure></li>
+<li role="group" aria-roledescription="snímek" data-r="r_slide" aria-label="5 / 5"><figure><img src="Portfolio%20Pics/understairs-wip.jpeg" alt="Police pod schody, rozpracovaná realizace" data-a="a_stairs" loading="eager" decoding="async"><figcaption data-i="c_stairs">Police pod schody (rozpracované)</figcaption></figure></li>
 </ul>
 </div>
 <div class="mq-ctl">
@@ -350,42 +353,66 @@ $$(".band img").forEach(function(im){
  function c(){if(im.naturalHeight>im.naturalWidth)im.closest(".band").classList.add("tall")}
  if(im.complete&&im.naturalWidth)c();else im.addEventListener("load",c)});
 
-/* ---------- carousel: native scroll-snap + buttons, keyboard, play/pause ---------- */
+/* ---------- carousel: continuous drift + prev/next/stop, scroll-snap swipe, keyboard ---------- */
 (function(){
- var box=$("#slider"),view=$("#mq-view"),slides=$$("#mq-track li"),
+ var box=$("#slider"),view=$("#mq-view"),track=$("#mq-track"),orig=$$("#mq-track li"),
   bPrev=$("#mq-prev"),bNext=$("#mq-next"),bPlay=$("#mq-play"),
   icoPause=$(".i-pause",bPlay),icoPlay=$(".i-play",bPlay),
-  userPaused=RM.matches,hover=false,focusIn=false,visible=true,timer=null;
- function max(){return view.scrollWidth-view.clientWidth}
+  userPaused=RM.matches,hover=false,focusIn=false,visible=true,
+  raf=0,last=0,pos=0,loopW=0,gt=null,gTarget=0,twice=false,SPEED=45;
+ function clone(){orig.forEach(function(li){var c=li.cloneNode(true);c.setAttribute("aria-hidden","true");
+  ["role","aria-label","aria-roledescription","data-r"].forEach(function(a){c.removeAttribute(a)});track.appendChild(c)})}
+ clone();
+ var firstClone=track.children[orig.length];
+ function recalc(){loopW=firstClone.offsetLeft;
+  if(loopW&&loopW<view.clientWidth*1.2&&!twice){twice=true;clone()}}
+ function jump(x){try{view.scrollTo({left:x,behavior:"instant"})}catch(e){view.scrollLeft=x}}
  function to(x){view.scrollTo({left:x,behavior:RM.matches?"auto":"smooth"})}
- function next(){var x=view.scrollLeft;if(x>=max()-4)return to(0);
-  for(var i=0;i<slides.length;i++){var o=slides[i].offsetLeft;if(o>x+4)return to(Math.min(o,max()))}to(0)}
- function prev(){var x=view.scrollLeft;if(x<=4)return to(max());
-  for(var i=slides.length-1;i>=0;i--){var o=slides[i].offsetLeft;if(o<x-4)return to(o)}to(0)}
+ function offs(){return $$("#mq-track li").map(function(l){return l.offsetLeft})}
+ function nxt(){var x=view.scrollLeft,o=offs();for(var i=0;i<o.length;i++)if(o[i]>x+4)return o[i];return x}
+ function prv(){var x=view.scrollLeft;if(x<=4&&loopW){jump(x+loopW);x+=loopW}
+  var o=offs();for(var i=o.length-1;i>=0;i--)if(o[i]<x-4)return o[i];return x}
+ function nearest(){var x=view.scrollLeft,b=x,d=1e9;offs().forEach(function(v){if(Math.abs(v-x)<d){d=Math.abs(v-x);b=v}});return b}
+ /* glide: smooth move with snap temporarily off, snap re-armed on arrival (no jolt) */
+ function done(force){if(!view.classList.contains("glide"))return;
+  if(!force&&Math.abs(view.scrollLeft-gTarget)>2)return;
+  clearTimeout(gt);var x=view.scrollLeft;if(loopW&&x>=loopW-1)jump(x-loopW);view.classList.remove("glide")}
+ function glide(x){clearTimeout(gt);gTarget=x;view.classList.remove("drift");view.classList.add("glide");to(x);
+  gt=setTimeout(function(){done(true)},RM.matches?30:900)}
+ view.addEventListener("scrollend",function(){done(false)});
+ /* drift: time-based, loops seamlessly over the cloned set */
+ function frame(t){raf=requestAnimationFrame(frame);
+  if(!last){last=t;pos=view.scrollLeft;return}
+  var dt=Math.min(t-last,50);last=t;
+  if(Math.abs(view.scrollLeft-pos)>2)pos=view.scrollLeft;
+  pos+=SPEED*dt/1000;if(loopW&&pos>=loopW)pos-=loopW;jump(pos)}
+ function start(){if(raf)return;clearTimeout(gt);view.classList.remove("glide");view.classList.add("drift");last=0;raf=requestAnimationFrame(frame)}
+ function stop(){if(raf){cancelAnimationFrame(raf);raf=0}}
  function running(){return !userPaused&&!hover&&!focusIn&&visible&&!document.hidden}
  function ui(){
   var k=userPaused?"s_play":"s_pause";bPlay.dataset.a=k;bPlay.setAttribute("aria-label",g(lang(),k));
   icoPause.hidden=userPaused;icoPlay.hidden=!userPaused;
   bPrev.setAttribute("aria-label",g(lang(),"s_prev"));bNext.setAttribute("aria-label",g(lang(),"s_next"));
-  view.setAttribute("aria-live",timer?"off":"polite")}
- function tick(){clearInterval(timer);timer=running()?setInterval(next,4500):null;ui()}
- function stopByUser(){userPaused=true;tick()}
+  view.setAttribute("aria-live",running()?"off":"polite")}
+ function tick(){if(running())start();else stop();ui()}
+ function manual(x){userPaused=true;stop();glide(x);ui()}
  window.carouselUI=ui;
- bPrev.addEventListener("click",function(){prev();tick()});
- bNext.addEventListener("click",function(){next();tick()});
- bPlay.addEventListener("click",function(){userPaused=!userPaused;tick()});
- view.addEventListener("pointerdown",stopByUser);
- view.addEventListener("keydown",function(e){var k=e.key;
-  if(k=="ArrowRight")next();else if(k=="ArrowLeft")prev();else if(k=="Home")to(0);else if(k=="End")to(max());else return;
-  e.preventDefault();stopByUser()});
+ bPrev.addEventListener("click",function(){manual(prv())});
+ bNext.addEventListener("click",function(){manual(nxt())});
+ bPlay.addEventListener("click",function(){if(userPaused){userPaused=false;tick()}else manual(nearest())});
+ view.addEventListener("pointerdown",function(){userPaused=true;stop();view.classList.remove("drift","glide");ui()});
+ view.addEventListener("keydown",function(e){var k=e.key,x;
+  if(k=="ArrowRight")x=nxt();else if(k=="ArrowLeft")x=prv();else if(k=="Home")x=0;else if(k=="End")x=orig[orig.length-1].offsetLeft;else return;
+  e.preventDefault();manual(x)});
  box.addEventListener("mouseenter",function(){hover=true;tick()});
  box.addEventListener("mouseleave",function(){hover=false;tick()});
  box.addEventListener("focusin",function(){focusIn=true;tick()});
  box.addEventListener("focusout",function(){focusIn=box.contains(document.activeElement);tick()});
  document.addEventListener("visibilitychange",tick);
  if("IntersectionObserver" in window)new IntersectionObserver(function(es){visible=es[0].isIntersecting;tick()}).observe(box);
- if(RM.addEventListener)RM.addEventListener("change",function(){if(RM.matches){userPaused=true;tick()}});
- tick();
+ if(RM.addEventListener)RM.addEventListener("change",function(){if(RM.matches){userPaused=true;stop();ui()}});
+ track.addEventListener("load",recalc,true);addEventListener("resize",recalc);
+ recalc();tick();
 })();
 
 /* ---------- init ---------- */
